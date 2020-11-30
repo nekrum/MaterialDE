@@ -1,0 +1,107 @@
+---
+title: "Explorando distribuciones"
+output: html_notebook
+---
+
+```{r setup, include=FALSE, warning = TRUE, message = TRUE}
+library(ggplot2)
+library(dplyr)
+```
+
+
+## ¿Porque es necesario conocer la distribución de nuestros datos?
+
+Muchas de las inferencias que hacemos sobre nuestros datos se basan en que 
+estos presenta una determinada distribución sobre todo cuando asumimos una distribución
+normal. Es decir una desviación estandar puede implicar cosas distintas en
+una distribución normal, en una distribución gamma o una distribución cauchy.
+
+
+```{r Ejemplo de distribución Normal, echo=FALSE, fig.width=8}
+set.seed(879)
+comparar.distribuciones <- data.frame(
+  tipo = factor(
+    c(rep("Normal", 150), rep("Cauchy", 150), rep("Gamma", 150)),
+    levels = c("Normal", "Cauchy", "Gamma")
+  ), 
+  valores = c(
+    rnorm(n = 150, mean = 100, sd = 3),
+    rgamma(n = 150, shape = 100),
+    rcauchy(n = 150, location = 100)
+  )
+)
+comparar.distribuciones %>% 
+  group_by(tipo) %>% 
+  mutate(
+    dist.mean = mean(valores),
+    upper.sd = mean(valores) + sd(valores),
+    lower.sd = mean(valores) - sd(valores)
+  ) %>% 
+ggplot(aes(x = valores, fill = tipo)) +
+  geom_histogram(bins = 30) +
+  geom_vline(aes(xintercept = dist.mean), color = "#A63D40", linetype = "dashed", size = 1) +
+  geom_vline(aes(xintercept = upper.sd), color = "#445174", linetype = "dotted", size = 1) +
+  geom_vline(aes(xintercept = lower.sd), color = "#445174", linetype = "dotted", size = 1) +
+  facet_wrap(~ tipo, scales = "free") +
+  scale_fill_manual(values = c("#DE932B", "#89A253", "#6192A8")) +
+  theme_minimal() +
+  theme(legend.position="bottom")
+
+```
+
+## Representación gráfica de la distribución
+
+En genera la prímera opción que tenemos al explorar la distribución de un conjunto
+de datoa es graficarslo.
+
+### Histograma
+
+Hemos hablado mucho de un histograma de los datos usando la función `hist()`.
+Con `ggplot2` podemos crear un histograma de forma sencilla
+
+Creamos unos datos aleatorios a partir de una distribución normal
+
+```{r}
+set.seed(928) # definimos una semilla con fines de reproducibilidad
+valores.normales <- data.frame(valores = rnorm(200, 40))
+valores.normales
+```
+
+> **Nota:**
+> Para que ggplot pueda usar nuestros datos tienen que estar dentro de un dataframe
+
+```{r}
+ggplot(valores.normales) +
+  geom_histogram(aes(valores))
+```
+Podemos darle una apariencia más agradable con:
+
+```{r}
+ggplot(valores.normales) +
+  geom_histogram(aes(valores), fill = "#A63D40", bins = 30) +
+  geom_rug(aes(valores), color = "#A63D40", alpha = 0.7) +
+  theme_minimal()
+```
+
+- Agregamos [colores en modo hexadecimal](https://www.color-hex.com/)
+aunque **R** cuenta con paletas de colores como ColorBrewer o Virids (Inluso tiene
+temas basados en películas de
+[Wes Anderson](https://cran.r-project.org/web/packages/wesanderson/index.html)).
+
+- Quitamos color de fondo invirtiendo la cuadrícula
+
+- Agregamos un gráfico de _"alfombra"_ que nos da una idea de la ocurrencia 
+de las observaciones.
+
+En este caso estamos viendo el conteo de la ocurrencia de valores,
+pero en ocasiones esta medida puede hacer difícil la visualización de la distribución,
+por lo que podemos hacer representaciones de la
+[densidad](https://en.wikipedia.org/wiki/Kernel_density_estimation).
+
+```{r}
+ggplot(valores.normales) +
+  geom_density(aes(valores), color = "#863234", fill = "#A63D40", bins = 30, alpha = 0.8) +
+  geom_rug(aes(valores), color = "#A63D40", alpha = 0.7) +
+  theme_minimal()
+```
+
