@@ -40,3 +40,9 @@ vignettes/*.pdf
 
 # Ignore Rproj file
 *.Rproj
+
+#Ignore Notebook HTML
+*.nb.html
+
+# Allow Notebook HTML in docs directory
+!docs/*.nb.html
