@@ -1,0 +1,79 @@
+---
+title: "Histograma COVID"
+author: "erh"
+date: "30 de noviembre de 2020"
+output: html_document
+---
+
+Usar la base de datos de COVID para hacer un histograma y sacar la estadística descriptiva de los datos:
+  * Media
+  * Mediana
+  * 1er y 3er cuartil
+  * rango intercuartilar
+  * Desviación estándar
+
+## Librerías
+```{r}
+library(NeurocienciasIntroData)
+library(ggplot2)
+library(tidyverse)
+library(ggExtra)
+```
+
+## Base de datos
+
+Hacer una copia de la base de datos para trabajar con ella.
+```{r}
+covid = datos.abiertos.covid
+head(covid)
+```
+
+## Histograma de las edades de los pacientes con covid-19
+
+```{r}
+h = ggplot(data = covid, aes(EDAD)) +
+  geom_histogram(aes(y = ..density..), breaks = seq(0, 100, 1)) +
+  labs(x = "Edad", y = "Densidad")
+
+h + geom_r
+```
+
+## Estadística descriptiva
+
+Crear una tabla estilo "summary" de la estadística descriptiva de los datos.
+```{r}
+q = quantile(covid$EDAD)
+
+stats = tibble(
+  minimo = min(covid$EDAD),
+  q1 = q[2],
+  mediana = q[3],
+  media = mean(datos.abiertos.covid$EDAD),
+  q3 = q[4],
+  maximo = max(covid$EDAD),
+  iqr = q3 - q1,
+  s = sd(datos.abiertos.covid$EDAD)
+)
+
+stats
+
+```
+
+```{r}
+h <- h + geom_vline(aes(xintercept = stats$mediana),
+                    color = "#FFCC5C", linetype="dashed", size = 1.5)
+h <- h + geom_vline(aes(xintercept = stats$media), 
+                    color = "#FF6F69", linetype = "dashed", size = 1.5)
+h
+```
+
+## Ajuste de una distribución normal a los datos
+```{r}
+x = seq(-10, max(datos.abiertos.covid$EDAD), .001)
+fit <- fitdistr(datos.abiertos.covid$EDAD, "normal")
+params <- fit$estimate
+
+h <- h + stat_function(fun = dnorm, args = list(mean = params[1], sd = params[2]), size = 1.5, colour = "#FF6F69" )
+h
+```
+

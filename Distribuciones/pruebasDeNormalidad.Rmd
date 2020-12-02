@@ -1,0 +1,45 @@
+---
+title: "Pruebas de Normalidad"
+author: "erh"
+date: "30 de noviembre de 2020"
+output: html_document
+---
+## Pruebas de normalidad
+
+```{r}
+n = 50 # num de datos
+m = 5  # media
+s = 2  # desv estándar
+
+# Datos que vienen de una distribución normal
+set.seed(100)
+norm_data = rnorm(n, m, s)
+
+shapiro.test(norm_data) # prueba de normalidad; h0: norm_data no está distribuida de manera normal
+
+# Datos que vienen de una distribución poisson
+set.seed(100)
+pois_data = rpois(n, m)
+shapiro.test(pois_data)
+```
+
+### Datos de distribuciones no normales que pasan las pruebas de normalidad
+```{r}
+set.seed(100)
+binom_data = rbinom(15, 5, .6)
+shapiro.test(x)
+
+pois_data = rpois(15, 5)
+shapiro.test(pois_data)
+```
+
+## QQplot
+```{r}
+qqnorm(norm_data)
+qqline(norm_data, col="red", lw=2)
+
+qqnorm(pois_data)
+qqline(pois_data, col="red", lw=2)
+
+qqnorm(binom_data)
+qqline(binom_data, col="red", lw=2)
