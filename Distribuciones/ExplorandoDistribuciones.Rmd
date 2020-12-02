@@ -63,7 +63,7 @@ Con `ggplot2` podemos crear un histograma de forma sencilla
 
 Creamos unos datos aleatorios a partir de una distribución normal
 
-```{r}
+```{r echo=FALSE}
 set.seed(928) # definimos una semilla con fines de reproducibilidad
 valores.normales <- data.frame(valores = rnorm(200, 40))
 ```
@@ -71,13 +71,13 @@ valores.normales <- data.frame(valores = rnorm(200, 40))
 > **Nota:**
 > Para que ggplot pueda usar nuestros datos tienen que estar dentro de un dataframe
 
-```{r}
+```{r echo=FALSE}
 ggplot(valores.normales) +
   geom_histogram(aes(valores))
 ```
 Podemos darle una apariencia más agradable con:
 
-```{r}
+```{r echo=FALSE}
 ggplot(valores.normales) +
   geom_histogram(aes(valores), fill = "#A63D40", bins = 30) +
   geom_rug(aes(valores), color = "#A63D40", alpha = 0.7) +
@@ -99,7 +99,7 @@ pero en ocasiones esta medida puede hacer difícil la visualización de la distr
 por lo que podemos hacer representaciones de la
 [densidad](https://en.wikipedia.org/wiki/Kernel_density_estimation).
 
-```{r}
+```{r echo=FALSE}
 ggplot(valores.normales) +
   geom_density(aes(valores), color = "#863234", fill = "#A63D40", alpha = 0.8) +
   geom_rug(aes(valores), color = "#A63D40", alpha = 0.7) +
@@ -111,7 +111,7 @@ ggplot(valores.normales) +
 La representación de los cuantiles mediante el gráfico de Boxplot nos permite 
 conocer la dispersión y compararla rápidamente
 
-```{r}
+```{r echo=FALSE}
 tres.distribuciones.normales <- data.frame(
   tipo = factor(
     c(rep("D1", 150), rep("D2", 150), rep("D3", 150)),
@@ -123,6 +123,9 @@ tres.distribuciones.normales <- data.frame(
     rnorm(n = 150, mean = 100, sd = 4)
   )
 )
+```
+
+```{r echo=FALSE}
 ggplot(tres.distribuciones.normales) +
   geom_boxplot(aes(x = tipo, y = valores, color = tipo)) +
   scale_color_manual(values = c("#DE932B", "#89A253", "#6192A8")) +
@@ -141,7 +144,7 @@ Sin embargo cuando las distribuciones tienen dispersiones o magnitudes muy difer
 la comparativa es complicada.
 
 
-```{r}
+```{r echo=FALSE}
 ggplot(comparar.distribuciones) +
   geom_boxplot(aes(x = tipo, y = valores, color = tipo)) +
   scale_color_manual(values = c("#DE932B", "#89A253", "#6192A8")) +
@@ -158,7 +161,7 @@ ggplot(comparar.distribuciones) +
 Nos podemos ayudar de una normalización de los datos graficados, sinembargo 
 esta normalización se debe interpretar con cuidado.
 
-```{r warning=TRUE}
+```{r echo=FALSE, warning=TRUE}
 ggplot(comparar.distribuciones) +
   geom_boxplot(aes(x = tipo, y = valores, color = tipo)) +
   scale_color_manual(values = c("#DE932B", "#89A253", "#6192A8")) +
@@ -181,7 +184,7 @@ individuales podríamos graficar los valores en puntos, sin embargo al tener sol
 una variable nominal para las distribuciones un gráfico de puntos no permite ver
 la totalidad de los mismos.
 
-```{r}
+```{r echo=FALSE}
 ggplot(comparar.distribuciones) +
   geom_point(aes(x = tipo, y = valores, color = tipo)) +
   scale_color_manual(values = c("#DE932B", "#89A253", "#6192A8")) +
@@ -199,7 +202,7 @@ ggplot(comparar.distribuciones) +
 Sin embargo la geometría _jitter_ al dispersar los valores sobre el eje x pero dentro 
 de un rango contenido, permite observar mejor los puntos de la distribución
 
-```{r}
+```{r echo=FALSE}
 ggplot(comparar.distribuciones) +
   geom_jitter(aes(x = tipo, y = valores, color = tipo)) +
   scale_color_manual(values = c("#DE932B", "#89A253", "#6192A8")) +
@@ -219,7 +222,7 @@ Combinando el boxplot y jitter se puede apreciar los puntos individuales y los c
 como una referencia de las distribución. Ademas al definir un valor alpha 
 (transparencia que va de 0 a 1) nos permitirá ver aglomeraciones de puntos.
 
-```{r}
+```{r echo=FALSE}
 ggplot(tres.distribuciones.normales) +
   geom_boxplot(aes(x = tipo, y = valores, color = tipo)) +
   geom_jitter(aes(x = tipo, y = valores, color = tipo), alpha = 0.2) +
