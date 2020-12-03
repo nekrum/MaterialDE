@@ -1,0 +1,74 @@
+---
+title: "Distribuciones de probabilidad"
+author: "Eduardo Rojas"
+date: "12/2/2020"
+output: html_notebook
+---
+
+  ## ¿Qué son las distribuciones de probabilidad?
+
+  En esencia son funciones (ie. ecuaciones) que te dan como resultado la probabilidad que tiene una variable aleatoria de asumir un valor.
+
+Propiedades:
+
+* Su rango va de 0 a 1
+* El área bajo la curva == 1
+* Describe la dispersión de los valores de la variable aleatoria
+
+### área bajo la curva (dnorm vs pnorm)
+```{r}
+
+
+```
+
+
+## Clasificación
+
+1. Funciones de probabilidad discretas (variables discretas)
+2. Funciones de probabilidad continuas (variables continuas)
+
+### Funciones de probabilidad discretas
+Se conocen también como **funciones de masa de probabilidad** (*probability mass functions*). Se les llama discretas porque las variables aleatorias sólo pueden tomar números enteros (número de eventos o éxitos).
+
+Algunos ejemplos son:
+
+  - Poisson: para número de eventos por unidad de tiempo o espacio (ej. potenciales de acción)
+- Binomial para variables binarias(ej.lanzar una moneda)
+- Uniforme para múltiples eventos con la misma probabilidad de ocurrencia (ej. lanzar un dado)
+
+```{r}
+# probabilidades de contraer influenza con y sin vacuna
+p_novacuna = 0.07
+p_vacuna = .019
+
+
+```
+
+
+### Funciones de probabilidad continua
+También conocidas como **funciones de probabilidad de densidad** (*probability density functions* o *pdf*). Los valores de la variable aleatoria pueden ser decimales, es decir pueden tomar un número infinito de valores entre dos números.
+
+Tienen  de 1 a 3 *parámetros* (genrealmente) que describen su forma. Los parámetros representan propiedades de la distribución (cómo la medida de tendencia central o su variabilidad) *aplicables a la población*. La mayoría de las veces los parámetros son desconocidos y se estiman de las muestras de la población.
+
+```{r}
+# curvas normales con diferentes valores de media y desv. estándar
+m =
+  s =
+
+
+  ```
+
+## Distribuciones para prueba de hipótesis
+Las pruebas de hipótesis requieren una *valor estadístico* apropiado para obtener los *valores p*.
+
+- la preuba *t* necesita *valores t*
+  - la ANOVA necesita *valores F*
+  - la *chi cuadrada* necesita *valores chi*
+
+  Las fórmulas de las pruebas estadísticas convierten los datos al valor del estadístico correspondiente, con el cual se obtienen los valores de p y se rechaza o no la hipótesis nula dependiendo del nivel de significancia
+
+```{r}
+
+```
+
+
