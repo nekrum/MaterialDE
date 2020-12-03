@@ -1,0 +1,110 @@
+---
+title: "Exploración de neuromorph"
+output: html_notebook
+---
+
+## Estructura del objeto
+
+  ```{r message=TRUE, warning=TRUE}
+library(NeurocienciasIntroData)
+library(dplyr) # Carga dplyr y permite usar glimpse
+```
+
+```{r eval=FALSE, include=FALSE}
+library(data.table)
+```
+
+```{r}
+str(neocortex.animal.size)
+```
+
+```{r}
+head(neocortex.animal.size)
+```
+
+```{r}
+tail(neocortex.animal.size)
+```
+
+```{r}
+glimpse(neocortex.animal.size)
+```
+
+```{r}
+data.table::as.data.table(neocortex.animal.size)
+```
+
+## Columnas existentes
+
+```{r}
+names(neocortex.animal.size)
+```
+
+# Cambio de Factor
+
+```{r}
+soma.caracter <- as.character(neocortex.animal.size$soma_surface)
+soma.numero <- as.numeric(soma.caracter)
+head(soma.numero)
+```
+
+```{r}
+vector.nas <- which(is.na(soma.numero)) # detecta los NA
+neocortex.animal.size$soma_surface[vector.nas] # Selecciona los valores NA
+```
+```{r}
+# Equivalente y mas conciso
+soma.caracter[is.na(soma.numero)]
+```
+
+```{r}
+neocortex.animal.size[vector.nas, c("domain", "soma_surface")]
+```
+
+```{r}
+neocortex.size <- neocortex.animal.size
+neocortex.size$soma_surface <- as.numeric(as.character(neocortex.size$soma_surface))
+neocortex.size$surface <- as.numeric(as.character(neocortex.size$surface))
+```
+
+```{r}
+str(neocortex.size)
+```
+
+```{r}
+mean(neocortex.size$soma_surface, na.rm = TRUE)
+median(neocortex.size$soma_surface, na.rm = TRUE)
+sd(neocortex.size$soma_surface, na.rm = TRUE)
+```
+
+```{r}
+neocortex.size$species <- as.character(neocortex.size$species)
+neocortex.size$species <- as.factor(neocortex.size$species) # esto convierte a factor
+
+neocortex.size$species <- factor(
+  neocortex.size$species,
+  levels = c("elephant", "humpback whale", "rat"),
+  labels = c("elefante", "ballena jorobada", "rata")
+  #ordered =  # se define como TRUE o FALSE para forzar el orden con respecto al vector de levels
+)
+
+summary(neocortex.size)
+```
+
+```{r}
+hist(log(neocortex.size$soma_surface))
+```
+```{r}
+hist(neocortex.size$volume)
+```
+
+```{r}
+neocortex.size$surface[1:5]
+
+```
+
+```{r}
+log(neocortex.size$surface[1:5])
+```
+
+
