@@ -1,0 +1,48 @@
+---
+title: "shipmanVictims"
+author: "erh"
+date: "30 de noviembre de 2020"
+output: html_document
+---
+
+## Librerías
+```{r}
+library(ggplot2)
+library(ggpubr)
+library(ggExtra)
+```
+
+## Cargar base de datos
+```{r}
+victimas = read.csv("shipman_victims.csv")
+head(victimas)
+```
+
+## Visualizar los datos
+
+1. Crea un diagrama de dispersión de la Edad de la víctima Vs. Año del fallecimiento con el género de las víctimas codificado con diferentes colores.
+
+2. Histogramas para ver la distribución de los datos
+
+
+```{r}
+
+# Diagrama de dispersión
+s <- ggplot(victimas, aes(x=fractionalDeathYear, y=Age, colour=reorder(gender2,gender))) 
+s <- s + geom_point(size=2)
+
+# Formato del plot
+s <- s +  labs(x ="Año del deceso", y="Edad de la víctima")
+s <- s + scale_x_continuous(breaks=seq(1975, 1995, 5), limits = c(1974,1998))
+s <- s + scale_y_continuous(breaks=seq(40, 90, 10), limits = c(39,95))
+s <- s + scale_colour_brewer(palette = "Set2")
+s <- s + theme(legend.position=c(0.125,1.12 ), legend.background = element_rect(colour = "black"), legend.title = element_blank())
+
+# Histogramas al margen
+ggMarginal(s, type="histogram")
+
+s
+
+```
+
+
