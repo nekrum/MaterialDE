@@ -2,7 +2,7 @@
 title: "Pruebas de Normalidad"
 author: "erh"
 date: "30 de noviembre de 2020"
-output: html_document
+output: html_notebook
 ---
 ## Pruebas de normalidad
 
@@ -27,7 +27,7 @@ shapiro.test(pois_data)
 ```{r}
 set.seed(100)
 binom_data = rbinom(15, 5, .6)
-shapiro.test(x)
+shapiro.test(binom_data)
 
 pois_data = rpois(15, 5)
 shapiro.test(pois_data)
@@ -43,3 +43,4 @@ qqline(pois_data, col="red", lw=2)
 
 qqnorm(binom_data)
 qqline(binom_data, col="red", lw=2)
+```

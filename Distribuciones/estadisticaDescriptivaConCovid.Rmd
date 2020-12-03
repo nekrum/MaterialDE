@@ -2,7 +2,7 @@
 title: "Histograma COVID"
 author: "erh"
 date: "30 de noviembre de 2020"
-output: html_document
+output: html_notebook
 ---
 
 Usar la base de datos de COVID para hacer un histograma y sacar la estadística descriptiva de los datos:
