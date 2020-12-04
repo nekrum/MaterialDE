@@ -1,46 +1,153 @@
 ---
 title: "Pruebas de Normalidad"
-author: "erh"
-date: "30 de noviembre de 2020"
 output: html_notebook
 ---
-## Pruebas de normalidad
+
+## Antes de empezar
+
+Algunos ejemplos necesitan las siguientes librerías. 
+
+- nortest
+- car
+- qualityTools
+
+Si aún no las tienes, instálalas.
 
 ```{r}
-n = 50 # num de datos
+install.packages("nortest")
+install.packages("car")
+install.packages("qualityTools")
+```
+
+## Pruebas de Normalidad
+
+Las pruebas de normalidad son pruebas estadísticas que ponen a prueba la hipótesis nula (h0) de que los datos tienen una distribución normal.
+
+Algunas pruebas son:
+
+* Shapiro-Wilk: muy usada para bases de datos con menos de 5000 datos
+* Kolmogorov-Smirnov
+* Anderson-Darling
+
+# Shapiro-Wilk
+
+En el ejemplo de abajo, la función *rnorm* saca *n* datos aleatorios de una distribución normal con *media = m* y *desviación estándar = s*. Después, a esos datos se les aplica la prueba *Shapiro-Wilk* para probar si vienen de una distribución normal o no.
+
+*Recuerda:* Generalmente no sabemos la distribución de los datos *a priori*. En este ejemplo sabemos que los datos vienen de una distribución normal entonces esperamos que la prueba *Shapiro-Wilk* **no rechace la h0**. 
+
+
+```{r}
+n = 10 # num de datos
 m = 5  # media
 s = 2  # desv estándar
 
-# Datos que vienen de una distribución normal
-set.seed(100)
 norm_data = rnorm(n, m, s)
+# Datos que vienen de una distribución normal
 
-shapiro.test(norm_data) # prueba de normalidad; h0: norm_data no está distribuida de manera normal
+shapiro.test(norm_data) # prueba de normalidad; h0: norm_data está distribuida de manera normal
 
-# Datos que vienen de una distribución poisson
+
+
+```
+
+Ahora probemos a *Shapiro-Wilk* con datos que sabemos que no vienen de una distribución normal.
+
+En el ejemplo de abajo generamos datos aleatorios de una distribución poisson con una *lambda = l*. En las distribuciones tipo poisson, *lambda* es como si fuera la media y es el único parámetro que se necesita.
+
+Como sabemos que **los datos NO vienen de una distribución normal** esperamos que *shapiro-wilk* **rechace la h0** 
+
+```{r}
+n = 20
+l = 2
 set.seed(100)
-pois_data = rpois(n, m)
+pois_data = rpois(n, l)
+
 shapiro.test(pois_data)
 ```
 
-### Datos de distribuciones no normales que pasan las pruebas de normalidad
+## Las pruebas de normalidad no son 100% certeras
+
+Como en cualquier prueba de hipótesis, habrá ocasiones en que las pruebas de normalidad nos den un *error tipo 2* o *falso negativo*.
+
+En los siguientes ejemplos Shapiro-Wilk falla en rechazar h0 para datos que provienen de una distribución binomial y una distribución poisson.
+
 ```{r}
+# Datos de una distribución binomial
 set.seed(100)
 binom_data = rbinom(15, 5, .6)
-shapiro.test(binom_data)
 
+hist(binom_data)
+shapiro.test(binom_data)
+```
+
+```{r}
+set.seed(100)
 pois_data = rpois(15, 5)
 shapiro.test(pois_data)
 ```
+Un ejemplo más de que las pruebas de normalidad no son perfectas, es cuando tenemos una cantidad de datos enorme. Como cualquier prueba estadística, **las pruebas de normalidad aumentan su poder estadístico (ie. capacidad de identificar pequeñas diferencias) con un número mayor de datos**.
 
-## QQplot
+En el ejemplo de abajo se obtienen **500,000** datos aleatorios de una distribución *t*. Recordemos que si queremos hacer una prueba de normalidad para esa cantidad tan grande de datos, shapiro-wilk no nos va a servir. Por lo que esta ocasión vamos a usar **Anderson-Darling** que está dentro de la librería *nortest*
+
+```{r}
+library(nortest)
+```
+
+```{r}
+set.seed(100)
+datos_masivos = rt(500000, 200)
+
+ad.test(datos_masivos)
+```
+Con Anderson-Darling el valor de p es suficientemente pequeño para rechazar h0. Sin embargo, al ver el histograma los datos parecen seguir una distribución normal casi perfecta.
+
+```{r}
+hist(datos_masivos)
+```
+
+**IMPORTANTE**
+Es prácticamente imposible que en la realidad tengamos datos perfectamente normales, y que sepamos *a priori* el tipo de distribución de la que provienenen nuestros datos. Los ejemplos de arriba son para ilustrar las debilidades que tienen las pruebas de normalidad y enfatizar que *es muy útil que vayan acompañadas de un método gráfico/visual en el que podamos ver la distribución de los datos.**
+
+
+## QQ plot
+
+Los QQ-plots, o plots cuantil-cuantil, son un método gráfico de ver si los datos están distribuidos normalmente o no.
+
+De manera muy simplificada, los qq-plots toman cuantiles de los datos y los grafican en función de los cuantiles de una distribución normal teórica. Si los datos siguen una distribución normal entonces los datos siguen una línea recta como en el ejemplo de abajo.
+
 ```{r}
 qqnorm(norm_data)
 qqline(norm_data, col="red", lw=2)
+```
 
+Si los datos tienen otra distribución, los datos se desvían de la línea recta.
+
+```{r}
 qqnorm(pois_data)
 qqline(pois_data, col="red", lw=2)
+```
 
+```{r}
 qqnorm(binom_data)
 qqline(binom_data, col="red", lw=2)
 ```
+Antes vimos que la prueba de normalidad de Anderson-Darling rechaza h0 a pesar de que en el histograma los datos siguen una distribución normal prácticamente perfecta. Con un qqplot, podemos ver que los datos masivos quedan prácticamente empalmados con la línea recta del qqplot.
+
+```{r}
+qqnorm(datos_masivos)
+qqline(datos_masivos, col="red", lw=2)
+```
+
+## QQ-plots también sirven para probar si los datos vienen de distribuciones diferentes a la normal.
+
+Las librerías *car* o *qualityTools* tienen funciones *qqPlot* para poder hacer gráficas cuantil-cuantil con distribuciones diferentes a la normal.
+
+En el ejemplo de abajo, se usaron los mismos datos generados a partir de una distribución *Poisson* (pois_data) para hacer un qq-plot, pero usando una distribución poisson teórica.
+
+En este caso es necesario cargar la librería *car* o *qualityTools*.
+
+```{r}
+library(car)
+qqPlot(pois_data, "pois", lambda = 5)
+```
+
