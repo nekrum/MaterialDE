@@ -16,6 +16,7 @@ knit: (function(inputFile, encoding) {
 options(htmltools.dir.version = FALSE)
 library(ggplot2)
 library(hrbrthemes)
+library(fitdistrplus)
 ```
 
 # Pasos
@@ -125,6 +126,7 @@ factores.default
 
 
 ---
+class: inverse
 
 # Factores
 
@@ -169,6 +171,7 @@ sd(mtcars$mpg)
 ]
 
 ---
+class: inverse
 
 # Estadística descriptiva
 
@@ -204,7 +207,7 @@ ggplot(iris) +
 ]
 
 .pull-right[
-```{r plot-label-out, ref.label="plot-label-1", echo=FALSE}
+```{r plot-label-out, ref.label="plot-label-1", echo=FALSE, fig.height=6, fig.retina=1.5}
 ```
 ]
 
@@ -217,10 +220,14 @@ ggplot(iris) +
 ```{r plot-label-2, eval=FALSE}
 ggplot(iris) +
   geom_density(
-    aes(x = Sepal.Length, fill = Species),
+    aes(x = Sepal.Length,
+        fill = Species,
+        color = Species
+    ),
     alpha = 0.3
   ) +
   scale_fill_brewer(palette = "Set1") +
+  scale_color_brewer(palette = "Set1") +
   theme_ipsum_rc() +
   labs(
     x = "Valores",
@@ -231,7 +238,117 @@ ggplot(iris) +
 ]
 
 .pull-right[
-```{r plot-label-out, ref.label="plot-label-2", echo=FALSE}
+```{r plot-label-out, ref.label="plot-label-2", echo=FALSE, fig.height=6, fig.retina=1.5}
 ```
 ]
+
+---
+class: inverse, middle
+# Análisis de distribución
+
+Podemos probar el tipo de distribución con con técnicas estadísticas y gráficas.
+
+- Shapiro-Wilk
+
+- Kolmogorov-Smirnov
+
+- qqplot
+
+---
+
+# Análisis de distribución
+### Shapiro-Wilk
+
+  * **Hipótesis nula** = datos tienen una distribución normal
+  * **Hipótesis alterna** = datos **NO** tieen distribución normal
+  * **p-value < 0.05** = se rechaza hipótesis nula
+
+.pull-left[
+```{r shaphiro-label, eval=FALSE}
+shapiro.test(iris$Sepal.Length)
+```
+]
+
+.pull-right[
+```{r plot-label-out, ref.label="shaphiro-label", echo=FALSE}
+```
+]
+
+<br>
+<br>
+
+> En esta caso el resultado de p = 0.01018 y como 0.0108 es **menor** a 0.05
+se **rechaza** la hipótesis nula o sea **la distribución no es normal**.
+
+---
+
+# Análisis de distribución
+### Kolmogorov-Smirnov<sup>6</sup>
+
+  * **Hipótesis nula** = datos tienen una distribución normal
+  * **Hipótesis alterna** = datos **NO** tienen distribución normal
+  * **p-value < 0.05** = se rechaza hipótesis nula
+
+.pull-left[
+```{r kolmogorov-smirnov-label, eval=FALSE, warning=FALSE}
+media_sepalength <- mean(iris$Sepal.Length)
+sd_sepalength <- sd(iris$Sepal.Length)
+ks.test(
+  iris$Sepal.Length,
+  "pnorm",
+  media_sepalength,
+  sd_sepalength
+)
+```
+]
+
+.pull-right[
+```{r plot-label-out, ref.label="kolmogorov-smirnov-label", echo=FALSE, warning=FALSE}
+```
+]
+
+
+
+.footnote[
+  [6] La prueba Kolmogorov-Smirnov permite comparar no solo distribuciones normales
+  ya que se pueden especificar otras distribuciones.
+]
+
+---
+
+# Análisis de distribución
+### QQplot
+
+El gráfico cuantil/cuantil compara la distribución de probabilidad de 
+nuestros datos con una distribución teórica.
+`qqnorm()` es una función incluida en **R** y que realiza
+la comparativa asumiendo una distribución normal.
+
+.pull-left[
+```{r qqnorm-label, eval=FALSE}
+qqnorm(iris$Sepal.Length)
+qqline(
+  iris$Sepal.Length,
+  col = "red",
+  lw = 2
+)
+```
+]
+
+.pull-right[
+```{r plot-label-out, ref.label="qqnorm-label", echo=FALSE, fig.height=5, fig.retina=1.5}
+```
+]
+
+---
+
+# Ajuste de distribución
+### extra
+
+Se puede identificar una distribución mediante la **curtosis** y el **sesgo**.
+R tiene paquetes que pueden facilitar esta tarea por ejemplo `fitdistrplus()`
+
+```{r fig.height=5, fig.align='center', fig.retina=1.5}
+descdist(iris$Sepal.Length)
+```
 
