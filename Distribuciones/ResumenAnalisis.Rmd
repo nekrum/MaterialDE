@@ -1,0 +1,237 @@
+---
+title: "Resumen Análisis"
+
+output:
+  xaringan::moon_reader:
+    self_contained: TRUE
+    nature:
+      highlightStyle: github
+      highlightLines: true
+      countIncrementalSlides: false
+      ratio: 16:9
+knit: (function(inputFile, encoding) {
+  rmarkdown::render(inputFile, encoding = encoding, output_dir = "../docs") })
+---
+```{r setup, include=FALSE}
+options(htmltools.dir.version = FALSE)
+library(ggplot2)
+library(hrbrthemes)
+```
+
+# Pasos
+
+--
+
+1. Acceder a los datos
+
+--
+
+2. Revisar la estructura de datos
+
+--
+
+3. Transformar variable 
+
+--
+
+4. Estadística descriptiva de variables
+
+--
+
+5. Representación gráfica de variables
+
+--
+
+6. Análisis de distribución
+
+---
+
+# Acceder a los datos
+
+Hasta el momento hemos accedido a los datos dentro del paquete `NeurocienciasIntroData`.
+Esto nos ahorra el problema de leer los datos de una fuente de datos externa.
+Sin embargo la mayoría de las veces que se obtienen datos es de archivos externos:
+
+- **CSV** valores separados por comas (`read.csv`, `read_csv`<sup>1</sup>, `fread`<sup>2</sup>)
+- **Excel** necesita la librería `readxl()` aunque hay otra alternativa.
+- **Google Sheets** usa la librería `googlesheets4()` al ser un servicio en la nube 
+permite interacción de varios usuarios y acceso en línea.
+
+<br>
+<br>
+
+> Existen otros archivos como los **SPSS**, **Stata**  o **Sas** entre otros
+para archivos distintos existen paquetes específicos. Como `foreign()`
+
+.footnote[
+  [1] Del paquete `readr()`.
+  
+  [2] Del paquete `data.table()`
+]
+
+---
+class: inverse
+
+# Estructura de datos
+
+Existen varios comandos para determinar la estructura de un objeto, sin embargo 
+el comando `str()` de _r-base_ permite inspeccionar la estructura de cualquier objeto.
+
+Por ejemplo podemos revisar la estructura del dataset integrado a **R**
+
+```{r}
+str(cars)
+```
+
+Este comando nos muestra el tipo de columna y las dimensiones del mismo.
+
+---
+
+# Transformar variables
+
+Para procesar adecuadamente los datos es necesario considerar el tipo de variable
+y codificarlas como tal.
+
+En general transformar los datos a números es un proceso directo con las funciones
+`as.numeric()`<sup>3</sup>, `as.double()`<sup>4</sup> `as.integer()`<sup>5</sup>
+
+Para los datos lógicos se puede convertir 0 y 1 a FALSO y VERDADERO con `as.logical()`
+
+Los valores nominales únicos pueden mantenerse como texto o convertirse a `as.chararcter()`
+
+Los **factores** son quiza el tipo de variable con una utilidad directa.
+
+.footnote[
+  [3] Números con decimales
+  
+  [4] Números con decimales de doble precisión.
+  
+  [5] Números enteros.
+]
+---
+
+# Factores
+
+Los factores se pueden definir de dos formas, con la función `as.factor()` que 
+convertirá un vector a factor asumiendo las características de orden, etiquetas y 
+niveles.
+
+```{r}
+set.seed(12)
+vector.letras <- sample(letters[1:3], 20, replace = TRUE)
+factores.default <- as.factor(vector.letras)
+factores.default
+```
+
+
+---
+
+# Factores
+
+También se puede mediante la función `factor()` donde se puede definir cada 
+característica del factor, orden, etiquetas y niveles extra
+
+```{r}
+factores.manual <- factor(
+  vector.letras,
+  levels = c("c", "b", "a", "d"),
+  labels = c("C", "B", "A", "D"),
+  ordered = TRUE
+)
+factores.manual
+```
+
+---
+
+# Estadística descriptiva 
+
+Con las variables bien codificadaspodemos aplicar estadísticas descriptivas:
+
+.pull-left[
+
+### Media de una variable
+
+```{r}
+mean(mtcars$mpg)
+```
+
+
+]
+
+.pull-right[
+
+### Desviación estandar
+
+```{r}
+sd(mtcars$mpg)
+```
+
+]
+
+---
+
+# Estadística descriptiva
+
+Si las variables que analizamos están bien definidas podemos usar comandos como
+`summary()` para tener métricas estadísticas generadas en automático.
+
+```{r}
+summary(iris[, c("Species", "Sepal.Length", "Petal.Length")])
+```
+
+
+---
+
+## Representación gráfica de variables
+
+### Boxplot
+
+.pull-left[
+```{r plot-label-1, eval=FALSE}
+ggplot(iris) +
+  geom_boxplot(aes(
+    x = Species,
+    y = Sepal.Length,
+    color = Species
+  )) +
+  scale_color_brewer(palette = "Set1") +
+  theme_ipsum_rc() +
+  labs(
+    x = "Especies",
+    y = "Longitud Sépalo"
+  )
+```
+]
+
+.pull-right[
+```{r plot-label-out, ref.label="plot-label-1", echo=FALSE}
+```
+]
+
+---
+
+## Representación gráfica de variables
+### Histogramas
+
+.pull-left[
+```{r plot-label-2, eval=FALSE}
+ggplot(iris) +
+  geom_density(
+    aes(x = Sepal.Length, fill = Species),
+    alpha = 0.3
+  ) +
+  scale_fill_brewer(palette = "Set1") +
+  theme_ipsum_rc() +
+  labs(
+    x = "Valores",
+    y = "Probabilidad",
+    title = "Gráfico de densidad"
+  )
+```
+]
+
+.pull-right[
+```{r plot-label-out, ref.label="plot-label-2", echo=FALSE}
+```
+]
+

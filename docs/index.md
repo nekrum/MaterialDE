@@ -9,3 +9,5 @@
 - [Estadística con Covid](estadisticaDescriptivaConCovid.nb.html)
 
 - [Ajuste de Distribuciones](AjustarDistribuciones.nb.html)
+
+- Presentación: [Resumen Análisis](ResumenAnalisis.html)
