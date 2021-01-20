@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>Sintaxis GGPlot</title>
+    <meta charset="utf-8" />
+    <link href="libs/remark-css/default.css" rel="stylesheet" />
+    <link href="libs/remark-css/default-fonts.css" rel="stylesheet" />
+    <link rel="stylesheet" href="custom.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+class: center, middle, inverse, title-slide
+
+# Sintaxis GGPlot
+## paquete ggplot2()
+
+---
+
+class: left, middle
+
+
+
+## Graficos en R
+
+- Graficos R base
+
+- Motor Grid (Paul Murrell, 2001)
+
+- Lattice (Sarkar D., 2008)
+
+- ggplot2 (Wickham H.2005)
+
+---
+class: center, middle, inverse
+
+## ¿Porque ggplot2?
+
+---
+
+## The Language of Graphics
+### Leland Wilkinson  2000
+
+Separa los componentes gráficos de los componentes estéticos.
+
+Permite por lo tanto una sintaxis replicable y modular que se puede expandir.
+
+Se pueden generar objetos que permitan reutilizar el código.
+
+---
+class: left, middle
+
+## Elementos de ggplot2
+
+- **Data**: Datos para graficar
+
+- **Aesthetic mapping**: Características estéticas
+
+- **Geom**: Objetos geométricos (puntos, líneas, polígonos, áreas…)
+
+- **Stat**: Transformaciones estadísticas
+
+- **Scale**: Escalas
+
+- **Coord**: El sistema de coordenadas
+
+- **Faceting**: Condicionamiento
+
+---
+
+## qplot
+
+Es una implementación rápida de ggplot, pero asume muchos factores y es limitada
+
+
+```r
+qplot(factor(cyl), wt, data = mtcars, geom = c("boxplot", "jitter"))
+```
+
+&lt;img src="Sintaxis_ggplot_files/figure-html/unnamed-chunk-1-1.png" width="504" style="display: block; margin: auto;" /&gt;
+
+
+---
+
+## Comando base
+
+
+```r
+ggplot(data = mtcars, aes(x = factor(cyl), y = wt)) + # Datos y variables se heredan
+  geom_boxplot() +
+  geom_jitter()
+```
+
+&lt;img src="Sintaxis_ggplot_files/figure-html/unnamed-chunk-2-1.png" width="504" style="display: block; margin: auto;" /&gt;
+
+---
+
+## Equivalente I
+
+.pull-left[ 
+### Ventajas
+
+- Se pueden usar diferentes columnas del mismo dataframe para los valores **X** y **Y**
+
+### Desventajas
+
+- Los rangos de los datos debe ser similares o la escala omitirá valores
+- Puede confundir las variables representadas
+
+]
+
+.pull-right[
+
+
+```r
+ggplot(data = mtcars) + # Datos se heredan
+  geom_boxplot(aes(x = factor(cyl), y = wt)) + # Variables en geometría
+  geom_jitter(aes(x = factor(cyl), y = drat))
+```
+
+&lt;img src="Sintaxis_ggplot_files/figure-html/unnamed-chunk-3-1.png" width="1050" /&gt;
+]
+---
+
+## Equivalente II
+
+.left-column[ 
+### Ventajas
+
+- Se pueden usar diferentes datos por geomtría
+
+### Desventajas
+
+- Los rangos de los datos debe ser similares o la escala omitirá valores
+- Puede confundir las variables representadas
+
+]
+
+.right-column[
+
+```r
+ggplot() +
+  geom_boxplot(data = mtcars[1:10,], aes(x = factor(cyl), y = wt)) + # Datos y variables
+  geom_jitter(data = mtcars[11:20,], aes(x = factor(cyl), y = wt)) # Datos y variables
+```
+
+&lt;img src="Sintaxis_ggplot_files/figure-html/unnamed-chunk-4-1.png" width="1050" /&gt;
+]
+
+---
+
+## Estética
+.left-column[ 
+### Elementos extra
+
+Se agregan elementos estésteticos a la estructura previa sin modificarla
+
+]
+
+.right-column[
+
+```r
+ggplot(data = mtcars) +
+  geom_boxplot(aes(x = factor(cyl), y = wt)) +
+  labs(
+    title = "Dataset Mtcars",
+    x = "Peso",
+    y = "Cilindros"
+  )
+```
+
+&lt;img src="Sintaxis_ggplot_files/figure-html/unnamed-chunk-5-1.png" width="504" style="display: block; margin: auto;" /&gt;
+]
+
+---
+
+## Objetos modificables
+
+Podemos incluir características multiples en un objeto
+
+
+```r
+p &lt;- ggplot(data = mtcars) +
+    labs(
+    title = "Dataset Mtcars",
+    x = "Peso",
+    y = "Cilindros"
+  )
+```
+
+---
+
+## Modificando Objetos
+
+Y rehusaralas una y ...
+
+
+```r
+p + geom_boxplot(aes(x = factor(cyl), y = wt))
+```
+
+&lt;img src="Sintaxis_ggplot_files/figure-html/unnamed-chunk-7-1.png" width="504" style="display: block; margin: auto;" /&gt;
+
+---
+
+### Agrega entradas
+
+Otra vez...
+
+
+```r
+p + geom_jitter(aes(x = factor(cyl), y = wt))
+```
+
+&lt;img src="Sintaxis_ggplot_files/figure-html/unnamed-chunk-8-1.png" width="504" style="display: block; margin: auto;" /&gt;
+
+---
+
+## Otros componentes estéticos
+### Temas
+
+Arreglos predeterminados para cambiar la apariencia
+
+&gt; Guardemos el boxplot
+
+
+```r
+mtcars_boxplot &lt;- p + geom_boxplot(aes(x = factor(cyl), y = wt))
+mtcars_boxplot
+```
+
+&lt;img src="Sintaxis_ggplot_files/figure-html/unnamed-chunk-9-1.png" width="504" style="display: block; margin: auto;" /&gt;
+
+---
+
+## Agregamos un tema
+
+
+```r
+mtcars_boxplot + theme_minimal()
+```
+
+&lt;img src="Sintaxis_ggplot_files/figure-html/unnamed-chunk-10-1.png" width="504" style="display: block; margin: auto;" /&gt;
+
+---
+
+## Agregamos un tema vacio
+
+.left-column[ 
+### Existen otros temas
+
+- theme_gray
+- theme_bw
+- theme_linedraw
+- theme_light
+- theme_dark
+- theme_classic
+- theme_test
+]
+
+.right-column[
+
+
+```r
+mtcars_boxplot + theme_void()
+```
+
+&lt;img src="Sintaxis_ggplot_files/figure-html/unnamed-chunk-11-1.png" width="504" style="display: block; margin: auto;" /&gt;
+]
+
+---
+
+## Paquetes externos
+
+.left-column[ 
+### Temas
+
+- theme_tufte()
+- theme_economist()
+- theme_stata()
+- theme_hc()
+]
+
+.right-column[
+
+```r
+library(ggthemes)
+mtcars_boxplot + theme_tufte()
+```
+
+&lt;img src="Sintaxis_ggplot_files/figure-html/unnamed-chunk-12-1.png" width="504" style="display: block; margin: auto;" /&gt;
+]
+
+---
+
+## Extra de estética
+
+## Paquetes externos
+
+.left-column[ 
+### Temas con un enfoque tipográfico
+
+Contiene una variedad importante de temas y vale la pena revisar las opciones en su [repo](https://github.com/hrbrmstr/hrbrthemes)
+
+]
+
+.right-column[
+
+```r
+library(hrbrthemes)
+mtcars_boxplot + theme_ipsum_rc()
+```
+
+&lt;img src="Sintaxis_ggplot_files/figure-html/unnamed-chunk-13-1.png" width="504" style="display: block; margin: auto;" /&gt;
+]
+
+
+---
+
+## Multiples gráficos 
+### Facet
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"ratio": "16:9",
+"highlightStyle": "tomorrow-night-eighties",
+"highlightLines": true,
+"countIncrementalSlides": false
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>

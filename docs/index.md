@@ -11,3 +11,5 @@
 - [Ajuste de Distribuciones](AjustarDistribuciones.nb.html)
 
 - Presentación: [Resumen Análisis](ResumenAnalisis.html)
+
+- Presentación: [GGplot](Sintaxis_ggplot.html)
