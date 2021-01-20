@@ -1,0 +1,286 @@
+---
+title: "Sintaxis GGPlot"
+subtitle: "paquete ggplot2()"
+output:
+  xaringan::moon_reader:
+    css: ["default", "default-fonts", "custom.css"]
+    lib_dir: libs
+    nature:
+      ratio: '16:9'
+      highlightStyle: tomorrow-night-eighties
+      highlightLines: true
+      countIncrementalSlides: false
+---
+class: left, middle
+
+```{r setup, include=FALSE}
+library(ggplot2)
+options(htmltools.dir.version = FALSE)
+knitr::opts_chunk$set(fig.retina = 3, warning = FALSE, message = FALSE)
+```
+
+## Graficos en R
+
+- Graficos R base
+
+- Motor Grid (Paul Murrell, 2001)
+
+- Lattice (Sarkar D., 2008)
+
+- ggplot2 (Wickham H.2005)
+
+---
+class: center, middle, inverse
+
+## ¿Porque ggplot2?
+
+---
+
+## The Language of Graphics
+### Leland Wilkinson  2000
+
+Separa los componentes gráficos de los componentes estéticos.
+
+Permite por lo tanto una sintaxis replicable y modular que se puede expandir.
+
+Se pueden generar objetos que permitan reutilizar el código.
+
+---
+class: left, middle
+
+## Elementos de ggplot2
+
+- **Data**: Datos para graficar
+
+- **Aesthetic mapping**: Características estéticas
+
+- **Geom**: Objetos geométricos (puntos, líneas, polígonos, áreas…)
+
+- **Stat**: Transformaciones estadísticas
+
+- **Scale**: Escalas
+
+- **Coord**: El sistema de coordenadas
+
+- **Faceting**: Condicionamiento
+
+---
+
+## qplot
+
+Es una implementación rápida de ggplot, pero asume muchos factores y es limitada
+
+```{r fig.height=4, fig.align='center'}
+qplot(factor(cyl), wt, data = mtcars, geom = c("boxplot", "jitter"))
+```
+
+
+---
+
+## Comando base
+
+```{r fig.height=4, fig.align='center'}
+ggplot(data = mtcars, aes(x = factor(cyl), y = wt)) + # Datos y variables se heredan
+  geom_boxplot() +
+  geom_jitter()
+```
+
+---
+
+## Equivalente I
+
+.pull-left[ 
+### Ventajas
+
+- Se pueden usar diferentes columnas del mismo dataframe para los valores **X** y **Y**
+
+### Desventajas
+
+- Los rangos de los datos debe ser similares o la escala omitirá valores
+- Puede confundir las variables representadas
+
+]
+
+.pull-right[
+
+```{r fig.height=5, dpi=150}
+ggplot(data = mtcars) + # Datos se heredan
+  geom_boxplot(aes(x = factor(cyl), y = wt)) + # Variables en geometría
+  geom_jitter(aes(x = factor(cyl), y = drat))
+```
+]
+---
+
+## Equivalente II
+
+.left-column[ 
+### Ventajas
+
+- Se pueden usar diferentes datos por geomtría
+
+### Desventajas
+
+- Los rangos de los datos debe ser similares o la escala omitirá valores
+- Puede confundir las variables representadas
+
+]
+
+.right-column[
+```{r fig.height=3, dpi=150}
+
+ggplot() +
+  geom_boxplot(data = mtcars[1:10,], aes(x = factor(cyl), y = wt)) + # Datos y variables
+  geom_jitter(data = mtcars[11:20,], aes(x = factor(cyl), y = wt)) # Datos y variables
+```
+]
+
+---
+
+## Estética
+.left-column[ 
+### Elementos extra
+
+Se agregan elementos estésteticos a la estructura previa sin modificarla
+
+]
+
+.right-column[
+```{r fig.height=4, fig.align='center'}
+ggplot(data = mtcars) +
+  geom_boxplot(aes(x = factor(cyl), y = wt)) +
+  labs(
+    title = "Dataset Mtcars",
+    x = "Peso",
+    y = "Cilindros"
+  )
+```
+]
+
+---
+
+## Objetos modificables
+
+Podemos incluir características multiples en un objeto
+
+```{r fig.height=4, fig.align='center'}
+p <- ggplot(data = mtcars) +
+    labs(
+    title = "Dataset Mtcars",
+    x = "Peso",
+    y = "Cilindros"
+  )
+```
+
+---
+
+## Modificando Objetos
+
+Y rehusaralas una y ...
+
+```{r fig.height=5, fig.align='center'}
+p + geom_boxplot(aes(x = factor(cyl), y = wt))
+```
+
+---
+
+### Agrega entradas
+
+Otra vez...
+
+```{r fig.height=5, fig.align='center'}
+p + geom_jitter(aes(x = factor(cyl), y = wt))
+```
+
+---
+
+## Otros componentes estéticos
+### Temas
+
+Arreglos predeterminados para cambiar la apariencia
+
+> Guardemos el boxplot
+
+```{r fig.height=4, fig.align='center'}
+mtcars_boxplot <- p + geom_boxplot(aes(x = factor(cyl), y = wt))
+mtcars_boxplot
+```
+
+---
+
+## Agregamos un tema
+
+```{r fig.height=5, fig.align='center'}
+mtcars_boxplot + theme_minimal()
+```
+
+---
+
+## Agregamos un tema vacio
+
+.left-column[ 
+### Existen otros temas
+
+- theme_gray
+- theme_bw
+- theme_linedraw
+- theme_light
+- theme_dark
+- theme_classic
+- theme_test
+]
+
+.right-column[
+
+```{r fig.height=4, fig.align='center'}
+mtcars_boxplot + theme_void()
+```
+]
+
+---
+
+## Paquetes externos
+
+.left-column[ 
+### Temas
+
+- theme_tufte()
+- theme_economist()
+- theme_stata()
+- theme_hc()
+]
+
+.right-column[
+```{r fig.height=4, fig.align='center'}
+library(ggthemes)
+mtcars_boxplot + theme_tufte()
+```
+]
+
+---
+
+## Extra de estética
+
+## Paquetes externos
+
+.left-column[ 
+### Temas con un enfoque tipográfico
+
+Contiene una variedad importante de temas y vale la pena revisar las opciones en su [repo](https://github.com/hrbrmstr/hrbrthemes)
+
+]
+
+.right-column[
+```{r fig.height=4, fig.align='center'}
+library(hrbrthemes)
+mtcars_boxplot + theme_ipsum_rc()
+```
+]
+
+
+---
+
+## Multiples gráficos 
+### Facet
+
+
+
